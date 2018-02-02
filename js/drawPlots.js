@@ -162,6 +162,9 @@ function drawPlots(allColors) {
   thd.append("td").text("l*");
   thd.append("td").text("a*");
   thd.append("td").text("b*");
+  thd.append("td").text("R");
+  thd.append("td").text("G");
+  thd.append("td").text("B");
   thd.append("td").text("rgb");
 
   function precisionRound(number, precision) {
@@ -174,6 +177,10 @@ function drawPlots(allColors) {
     r.append("td").text(precisionRound(d.l, 2));
     r.append("td").text(precisionRound(d.a, 2));
     r.append("td").text(precisionRound(d.b, 2));
+    var rgb = d3.rgb(d);
+    r.append("td").text(Math.round(rgb.r));
+    r.append("td").text(Math.round(rgb.g));
+    r.append("td").text(Math.round(rgb.b));
     r.append("td").text(d + "");
   });
 }
