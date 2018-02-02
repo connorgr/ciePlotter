@@ -1,0 +1,77 @@
+<html>
+<head>
+  <style type="text/css">
+    * { font-family: sans-serif; }
+    td { font-size: 12; }
+  </style>
+</head>
+
+<body>
+
+<div class="uploader">
+    <h2>Create a plot from an image</h2>
+    <p>After you select the image to upload, make sure to click the upload button.</p>
+    <div class="imageColorPicker">
+      <div class="uploadForm">
+        Upload <input type="file"> <button class="uploadBtn">Upload</button>
+      </div>
+
+      <div class="imgContainer">
+        <div class="dragArea">
+          <p>OR drag image here.</p>
+        </div>
+        <img class="dropImg">
+      </div>
+      <canvas class="invisible" width="100" height="100"></canvas>
+      <ul class="uniqueColors"></ul>
+    </div>
+  </div>
+
+  <div class="palettePreview">
+    <ul class="palettePreviewList"></ul>
+  </div>
+</div>
+
+<button class="drawBtn">Draw plots (upload an image first)</button>
+<button class="saveBtn">Save what's rendered (will freeze page)</button>
+
+<!-- <script src="js/svg-crowbar.js"></script> -->
+<script src="js/d3.v4.js"></script>
+<script src="js/scales.js"></script>
+<script src="js/uploadImage.js"></script>
+<script src="js/drawPlots.js"></script>
+<script>
+makeImageColorPicker(d3.select(".uploader"));
+
+var sampleScales = [
+  scales_cb.blue,
+  scales_cb.red,
+  scales_matlab.jet,
+  scales_matlab.autumn,
+  scales_matlab.hot
+];
+
+console.log(scales_cb);
+
+sampleScales.forEach(drawPlots);
+
+d3.select(".drawBtn").on("click", function() {
+  var allColors = [],
+      lis = d3.selectAll(".uniqueColors li");
+  lis.each(function() {
+    allColors.push(d3.lab(d3.select(this).style("background-color")));
+  });
+
+  drawPlots(allColors);
+});
+
+d3.select(".saveBtn").on("click", function() {
+  var e = document.createElement('script');
+  e.setAttribute('src', 'js/svg-crowbar.js');
+  e.setAttribute('class', 'svg-crowbar');
+  document.body.appendChild(e);
+});
+
+</script>
+</body>
+</html>
