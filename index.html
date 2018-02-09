@@ -32,7 +32,9 @@
   </div>
 </div>
 
-<button class="drawBtn">Draw plots (upload an image first)</button>
+<p>Number of steps: <input type="number" value="8" class="stepInput" /></p>
+<button class="drawDefaultBtn">Draw default scales</button>
+<button class="drawBtn">Draw uploaded plot (upload an image first)</button>
 <button class="saveBtn">Save what's rendered (will freeze page)</button>
 
 <!-- <script src="js/svg-crowbar.js"></script> -->
@@ -51,9 +53,12 @@ var sampleScales = [
   scales_matlab.hot
 ];
 
-console.log(scales_cb);
-
-sampleScales.forEach(drawPlots);
+d3.select(".drawDefaultBtn").on("click", function() {
+  var val = +d3.select(".stepInput").property("value");
+  sampleScales.forEach(function(d) {
+    drawPlots(d, val);
+  });
+});
 
 d3.select(".drawBtn").on("click", function() {
   var allColors = [],
@@ -62,7 +67,7 @@ d3.select(".drawBtn").on("click", function() {
     allColors.push(d3.lab(d3.select(this).style("background-color")));
   });
 
-  drawPlots(allColors);
+  drawPlots(allColors, 8);
 });
 
 d3.select(".saveBtn").on("click", function() {

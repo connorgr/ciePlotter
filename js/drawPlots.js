@@ -1,15 +1,9 @@
-function drawPlots(allColors) {
+function drawPlots(allColors, points) {
   allColors = allColors.map(d => d3.lab(d));
 
-  // subsample colors
-  var delta = 10,
-      colors = [],
-      itr = allColors.length < 8 ? 1 : Math.floor(allColors.length/8);
-
   var domain = Array(allColors.length).fill(allColors.length - 1).map((d,i) => i / d),
-      colorScale = d3.scaleLinear(d3.interpolateLab).domain(domain).range(allColors);
-  colors = Array(8).fill(0).map((d,i) => d3.lab(colorScale(i/7)));
-
+      colorScale = d3.scaleLinear(d3.interpolateLab).domain(domain).range(allColors),
+      colors = Array(points).fill(0).map((d,i) => d3.lab(colorScale(i/(points-1))));;
 
   var container = d3.select("body").append("div").style("margin-bottom", "2em"),
       svgClasses = ["plot_ab", "plot_la", "plot_lb"];
