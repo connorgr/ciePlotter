@@ -6,12 +6,10 @@ function drawPlots(allColors) {
       colors = [],
       itr = allColors.length < 8 ? 1 : Math.floor(allColors.length/8);
 
-  if(allColors.length % 8 !== 0 && itr > 1) itr--; // we always want to include the endpoints
-  for (var i = 0; i < allColors.length; i=i+itr) {
-    if(allColors[i] === undefined) continue;
-    colors.push(allColors[i]);
-  }
-  if(allColors % 8 !== 0 && allColors.length > 9) colors.push(allColors[allColors.length-1]);
+  var domain = Array(allColors.length).fill(allColors.length - 1).map((d,i) => i / d),
+      colorScale = d3.scaleLinear(d3.interpolateLab).domain(domain).range(allColors);
+  colors = Array(8).fill(0).map((d,i) => d3.lab(colorScale(i/7)));
+
 
   var container = d3.select("body").append("div").style("margin-bottom", "2em"),
       svgClasses = ["plot_ab", "plot_la", "plot_lb"];
@@ -148,39 +146,42 @@ function drawPlots(allColors) {
       .attr("width", fullWidth).attr("height", fullWidth)
       .attr("xmlns", "http://www.w3.org/2000/svg");
 
+  makeTable(colors);
+  makeTable(allColors);
 
-  var tbl = container.append("table").attr("height", 200).attr("width", 400),
-      thd = tbl.append("thead")
-      tbd = tbl.append("tbody"),
-      rows = tbd.selectAll("tr").data(colors).enter().append("tr");
+  function makeTable(colorData) {
+    var tbl = container.append("table").attr("height", 200).attr("width", 400),
+        thd = tbl.append("thead")
+        tbd = tbl.append("tbody"),
+        rows = tbd.selectAll("tr").data(colorData).enter().append("tr");
 
-  tbl.style("display", "inline-block");
-  thd.style("display", "block");
-  tbd.style("overflow-y", "scroll").style("display", "block");
+    tbl.style("display", "inline-block");
+    tbd.style("max-height", 200).style("overflow-y", "scroll").style("display", "block");
 
-  thd.append("td").text("");
-  thd.append("td").text("l*");
-  thd.append("td").text("a*");
-  thd.append("td").text("b*");
-  thd.append("td").text("R");
-  thd.append("td").text("G");
-  thd.append("td").text("B");
-  thd.append("td").text("rgb");
+    thd.append("td").text("");
+    thd.append("td").text("l*");
+    thd.append("td").text("a*");
+    thd.append("td").text("b*");
+    thd.append("td").text("R");
+    thd.append("td").text("G");
+    thd.append("td").text("B");
+    thd.append("td").text("rgb");
 
-  function precisionRound(number, precision) {
-    var factor = Math.pow(10, precision);
-    return Math.round(number * factor) / factor;
+    function precisionRound(number, precision) {
+      var factor = Math.pow(10, precision);
+      return Math.round(number * factor) / factor;
+    }
+    rows.each(function(d) {
+      var r = d3.select(this);
+      r.append("td").attr("width", 10).style("background-color", d);
+      r.append("td").text(precisionRound(d.l, 2));
+      r.append("td").text(precisionRound(d.a, 2));
+      r.append("td").text(precisionRound(d.b, 2));
+      var rgb = d3.rgb(d);
+      r.append("td").text(Math.round(rgb.r));
+      r.append("td").text(Math.round(rgb.g));
+      r.append("td").text(Math.round(rgb.b));
+      r.append("td").text(d + "");
+    });
   }
-  rows.each(function(d) {
-    var r = d3.select(this);
-    r.append("td").attr("width", 10).style("background-color", d);
-    r.append("td").text(precisionRound(d.l, 2));
-    r.append("td").text(precisionRound(d.a, 2));
-    r.append("td").text(precisionRound(d.b, 2));
-    var rgb = d3.rgb(d);
-    r.append("td").text(Math.round(rgb.r));
-    r.append("td").text(Math.round(rgb.g));
-    r.append("td").text(Math.round(rgb.b));
-    r.append("td").text(d + "");
-  });
 }
