@@ -58,6 +58,8 @@ d3.select(".drawDefaultBtn").on("click", function() {
   sampleScales.forEach(function(d) {
     drawPlots(d, val);
   });
+  var rothScale = [d3.lab("black"), d3.lab("rgb(56, 126, 185)"), d3.lab("white")];
+  drawPlots(rothScale, val);
 });
 
 d3.select(".drawBtn").on("click", function() {
